@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, Inject } from '@angular/core';
 import { HousingLocation } from '../housing-location/housing-location';
 import { HousingLocationInfo } from '../housing-location-info';
+import { Housing } from '../housing';
 
 @Component({
   selector: 'app-home',
@@ -12,24 +13,18 @@ import { HousingLocationInfo } from '../housing-location-info';
         <button class="primary" type="button">Search</button>
       </form>
     </section>
-    <section>
-      <app-housing-location [housingLocationInfo]="housingLocationInfo" />
+    <section class="results">
+      @for(housingLocationInfo of housingLocationInfoList; track $index){
+        <app-housing-location [housingLocationInfo]="housingLocationInfo" />
+      }
     </section>
   `,
   styleUrls: ['./home.css'],
 })
 export class Home {
-  readonly baseUrl = 'https://angular.dev/assets/images/tutorials/common';
-  housingLocationInfo: HousingLocationInfo = {
-    id: 9999,
-    name: 'Test Home',
-    city: 'Test city',
-    state: 'ST',
-    photo: `${this.baseUrl}/example-house.jpg`,
-    availableUnits: 99,
-    wifi: true,
-    laundry: false,
-  };
-
-
+  housingLocationInfoList: HousingLocationInfo[] = [];
+  housingService = inject(Housing);
+  constructor() {
+    this.housingLocationInfoList = this.housingService.getAllHousingLocationInfos();
+  }
 }
